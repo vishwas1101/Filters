@@ -32,10 +32,10 @@ void setup() {
   time = millis();
 
   //Calculating error of gyroscope and accelerometer
-  //take average of 200 values as the error 
+  //take average of 500 values as the error 
 
   //getting accelerometer error 
-  for(int i = 0; i<200; i++){
+  for(int i = 0; i<500; i++){
     Wire.beginTransmission(0x68);
     Wire.write(0x3B);                       
     Wire.endTransmission(false);
@@ -50,11 +50,11 @@ void setup() {
     accError[2] = accError[2] + ((atan((accRaw[2])/sqrt(pow((accRaw[1]),2) + pow((accRaw[0]),2)))*RAD2DEG));
    }
   for(int i = 0; i<3; i++){
-    accError[i] = accError[i]/200.0;
+    accError[i] = accError[i]/500.0;
    }
 
   //getting gyroscope error
-  for(int i = 0; i<200; i++){
+  for(int i = 0; i<500; i++){
     Wire.beginTransmission(0x68);
     Wire.write(0x43);
     Wire.endTransmission(false);
@@ -69,7 +69,7 @@ void setup() {
     gyrError[2] = gyrError[2] + (gyrRaw[2]/32.8); 
   }
   for(int i = 0; i<3; i++){
-    gyrError[i] = gyrError[i]/200.0;
+    gyrError[i] = gyrError[i]/500.0;
   }  
 }
 
@@ -115,13 +115,13 @@ void loop() {
   pitch = 0.98 * (pitch + gyrAngle[1]) + 0.02*accAngle[1];
   yaw = 0.98 * (yaw + gyrAngle[2]) + 0.02*accAngle[2];
 
- Serial.print("Xº: ");
+ Serial.print("Roll: ");
  Serial.print(roll);
  Serial.print("   |   ");
- Serial.print("Yº: ");
+ Serial.print("Pitch: ");
  Serial.print(pitch);
  Serial.print("   |   ");
- Serial.print("Zº: ");
+ Serial.print("Yaw: ");
  Serial.print(yaw);
  Serial.println(" ");
 
