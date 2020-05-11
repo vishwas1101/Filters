@@ -1,6 +1,6 @@
 # MPU6050
 Get yaw pitch and roll without the use of any additional library other than Wire.h
-Wire.h is used for i2c communication 
+Wire.h is used for I2C communication 
 
 The hexadecimel register addresses maybe seen in the pdf of the register map.
 
