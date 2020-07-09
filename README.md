@@ -1,6 +1,8 @@
-# MPU6050
+# Complementary Filter
 Get yaw pitch and roll without the use of any additional library other than Wire.h
 Wire.h is used for I2C communication 
+
+A complementary filter is used, it integrates the accelerometer and the gyroscope. It calculates angles by applying a high pass filter to the gyroscope data and a low pass filter to the accelerometer and combines them.
 
 The hexadecimel register addresses maybe seen in the pdf of the register map.
 
