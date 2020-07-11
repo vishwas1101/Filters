@@ -1,28 +1,59 @@
 #include <Wire.h>
 #define RAD2DEG 180/PI
+ 
+float accRaw[3], gyrRaw[3];
+float accError[3], gyrError[3];
+float accAngle[3], gyrRate[2];
+float roll = 0, pitch = 0;
 
-int accRaw[3], gyrRaw[3];
-int accError[3], gyrError[3];
-int accCal[2], gyrCal[2];
-int roll, pitch;
+float Qangle =  0.001;
+float Qbias = 0.003;
+float R = 0.03;
 
-//constants and noise 
-float Q = 2.0, R = 4.0;   //covariance noise, Gaussian noise 
-float kalGain[2]; //kalman gains 
-float P[3] = {0.1, 0.1, 0.1};  //error is covariance matrices 
+float angle = 0;
+float bias = 0;
 
-//time
-float dt = 0.01;
+float P[2][2] = {0,0,0,0};
 
-unsigned long t, timer;
+float rate, dt;
+float time, prevtime;
 
+float S, K[2], y;  
+
+float kalAngle(float newAngle, float rateGyr, float dt){
+  rate = rateGyr - bias;
+  angle = angle + rate * dt; 
+
+  P[0][0] = P[0][0] + dt * (dt * P[1][1] - P[0][1] - P[1][0] + Qangle);
+  P[0][1] = P[0][1] - dt * P[1][1];
+  P[1][0] = P[1][0] - dt * P[1][1];
+  P[1][1] = P[1][1] + dt * Qbias;
+
+  S = P[0][0] + R;
+
+  K[0] = P[0][0]/S;
+  K[1] = P[1][0]/S;
+
+  y = newAngle - angle;
+
+  angle = angle + K[0]*y;
+  bias = bias + K[1]*y;
+
+  P[0][0] = P[0][0] - K[0] * P[0][0];
+  P[0][1] = P[0][1] - K[0] * P[0][1];
+  P[1][0] = P[0][0] - K[1] * P[0][0];
+  P[1][1] = P[1][1] - K[1] * P[0][1];
+
+  return angle;
+}
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   
   Wire.begin();
   Wire.beginTransmission(0x68);
+  Wire.write(0x6B);
   Wire.write(0x00);
   Wire.endTransmission(true);
 
@@ -40,9 +71,7 @@ void setup() {
   
   //Calculating error of gyroscope and accelerometer
   //take average of 500 values as the error 
-
-
-  t = millis(); 
+  time  = millis(); 
   
   //getting accelerometer error 
   for(int i = 0; i<500; i++){
@@ -51,9 +80,9 @@ void setup() {
     Wire.endTransmission(false);
     Wire.requestFrom(0x68, 6, true);
 
-    accRaw[0] = (Wire.read()<<8|Wire.read())/4096.0; 
-    accRaw[1] = (Wire.read()<<8|Wire.read())/4096.0;
-    accRaw[2] = (Wire.read()<<8|Wire.read())/4096.0;
+    accRaw[0] = (Wire.read()<<8|Wire.read()); 
+    accRaw[1] = (Wire.read()<<8|Wire.read());
+    accRaw[2] = (Wire.read()<<8|Wire.read());
 
     accError[0] = accError[0] + ((atan((accRaw[1])/sqrt(pow((accRaw[0]),2) + pow((accRaw[2]),2)))*RAD2DEG));
     accError[1] = accError[1] + ((atan(-1*(accRaw[0])/sqrt(pow((accRaw[1]),2) + pow((accRaw[2]),2)))*RAD2DEG));
@@ -74,19 +103,22 @@ void setup() {
     gyrRaw[1] = (Wire.read()<<8|Wire.read());
     gyrRaw[2] = (Wire.read()<<8|Wire.read());
 
-    gyrError[0] = gyrError[0] + (gyrRaw[0]/32.8);
-    gyrError[1] = gyrError[1] + (gyrRaw[1]/32.8);
-    gyrError[2] = gyrError[2] + (gyrRaw[2]/32.8); 
+    gyrError[0] = gyrError[0] + (gyrRaw[0]/131.0);
+    gyrError[1] = gyrError[1] + (gyrRaw[1]/131.0);
+    gyrError[2] = gyrError[2] + (gyrRaw[2]/131.0); 
   }
   for(int i = 0; i<3; i++){
     gyrError[i] = gyrError[i]/500.0;
   }
   
-
+  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  dt = (millis() - time)/1000;
+  time = millis();
+  
   Wire.beginTransmission(0x68);
   Wire.write(0x3B);
   Wire.endTransmission(false);
@@ -105,52 +137,19 @@ void loop() {
   gyrRaw[1] = Wire.read()<<8|Wire.read();
   gyrRaw[2] = Wire.read()<<8|Wire.read();
 
-  accCal[0] = atan2((accRaw[1] - accError[1])/256, (accRaw[2] - accError[2])/256) * RAD2DEG;
-  gyrCal[0] = gyrCal[0] + ((gyrRaw[0] - gyrError[0])/14.375)*dt;
+  accAngle[0] = atan((accRaw[1])/sqrt(pow((accRaw[0]),2) + pow((accRaw[2]),2)))*RAD2DEG - accError[0];
+  accAngle[1] = atan(-1*(accRaw[0])/sqrt(pow((accRaw[1]),2) + pow((accRaw[2]),2)))*RAD2DEG - accError[1];
 
-  if(gyrCal[0] >= 180)
-  {
-    gyrCal[0] = gyrCal[0] - 360;
-  }
-  else if(gyrCal[0] < 180)
-  {
-    gyrCal[0] = gyrCal[0] + 360;
-  }
+  gyrRate[0] = gyrRaw[0]/131.0 - gyrError[0];
+  gyrRate[1] = gyrRaw[1]/131.0 - gyrError[1];
 
-  roll = roll + ((gyrRaw[0] - gyrError[0])/14.375)*dt;
+  //calculating pitch and roll
+  roll = kalAngle(accAngle[0], gyrRate[0], dt);
+  pitch = kalAngle(accAngle[1], gyrRate[1], dt);
+  
+  Serial.print("pitch: ");
+  Serial.print(pitch);
+  Serial.print("   roll: ");
+  Serial.println(roll);
 
-  accCal[1] = atan2((accRaw[0] - accError[0])/256, (accRaw[2] - accError[2])/256) * RAD2DEG;
-  gyrCal[1] = gyrCal[1] + ((gyrRaw[1] - gyrError[1])/14.375)*dt;
-
-
-  if(gyrCal[1] >= 180)
-  {
-    gyrCal[1] = gyrCal[1] - 360;
-  }
-  else if(gyrCal[1] < 180)
-  {
-    gyrCal[1] = gyrCal[1] + 360;
-  }
-
-  pitch = pitch - ((gyrRaw[1] - gyrError[1])/14.375) * dt;
-
-  P[0] = P[0] + (2*P[1] + dt*P[2])*dt;
-  P[1] = P[1] + P[2] * dt;
-  P[0] = P[0] + Q * dt;
-  P[2] = P[2] + Q * dt;
-
-  kalGain[0] = P[0] / (P[0] + R);
-  kalGain[1] = P[1] / (P[1] + R);
-
-  roll = roll +  (accCal[0] - roll) * kalGain[0];
-  pitch = pitch + (accCal[1] - pitch) * kalGain[0];
-
-  P[0] = P[0] * (1 - kalGain[0]);
-  P[1] = P[1] * (1 - kalGain[1]);
-  P[2] = P[2] - kalGain[1] * P[1];
-
-  t = millis();
-  timer = millis() - timer;
-  timer = (dt * 1000) - timer;
- 
 }
