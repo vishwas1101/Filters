@@ -1,0 +1,12 @@
+#include <math.h>
+#ifndef MATLAB_MEX_FILE
+
+#include <Arduino.h>
+#include "Wire.h"
+#include "Wire.cpp"
+
+double accRaw[3], gyrRaw[3];
+double accError[3], gyrError[3];
+double accAngle[3], gyrRate[2];
+
+#endif

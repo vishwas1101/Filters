@@ -1,0 +1,143 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red178\green140\blue0;\red60\green118\blue61;
+}
+{\*\expandedcolortbl;;\csgenericrgb\c0\c0\c100000;\csgenericrgb\c69804\c54902\c0;\csgenericrgb\c23529\c46275\c23922;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs20 \cf2 if\cf0 (xD[0] != 1) \{
+\fs24 \
+\pard\pardeftab720\partightenfactor0
+
+\fs20 \cf0   \cf3 #ifndef\cf0  MATLAB_MEX_FILE
+\fs24 \
+
+\fs20   Serial.begin(9600);
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   \cf4 //Begin wire communication with mpu6050
+\fs24 \cf0 \
+
+\fs20   Wire.begin();
+\fs24 \
+
+\fs20   Wire.beginTransmission(0x68);
+\fs24 \
+
+\fs20   Wire.write(0x00);
+\fs24 \
+
+\fs20   Wire.endTransmission(\cf2 true\cf0 );
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   \cf4 //Accelerometer 
+\fs24 \cf0 \
+
+\fs20   Wire.beginTransmission(0x68);
+\fs24 \
+
+\fs20   Wire.write(0x1C);
+\fs24 \
+
+\fs20   Wire.write(0x10);
+\fs24 \
+
+\fs20   Wire.endTransmission(\cf2 true\cf0 );
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   \cf4 //Gyroscope
+\fs24 \cf0 \
+
+\fs20   Wire.beginTransmission(0x68);
+\fs24 \
+
+\fs20   Wire.write(0x1B);
+\fs24 \
+
+\fs20   Wire.write(0x10);
+\fs24 \
+
+\fs20   Wire.endTransmission(\cf2 true\cf0 );
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   Wire.beginTransmission(0x68);
+\fs24 \
+
+\fs20   Wire.write(0x3B);
+\fs24 \
+
+\fs20   Wire.endTransmission(\cf2 false\cf0 );
+\fs24 \
+
+\fs20   Wire.requestFrom(0x68, 4, \cf2 true\cf0 );
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   accRaw[0] = (Wire.read()<<8|Wire.read());
+\fs24 \
+
+\fs20   accRaw[1] = (Wire.read()<<8|Wire.read());
+\fs24 \
+
+\fs20   accRaw[2] = (Wire.read()<<8|Wire.read());
+\fs24 \
+
+\fs20   
+\fs24 \
+
+\fs20   \cf4 //Getting gyroscope values 
+\fs24 \cf0 \
+
+\fs20   Wire.beginTransmission(0x68);
+\fs24 \
+
+\fs20   Wire.write(0x43);
+\fs24 \
+
+\fs20   Wire.endTransmission(\cf2 false\cf0 );
+\fs24 \
+
+\fs20   Wire.requestFrom(0x68, 6, \cf2 true\cf0 );
+\fs24 \
+
+\fs20  
+\fs24 \
+
+\fs20   gyrRaw[0] = Wire.read()<<8|Wire.read();
+\fs24 \
+
+\fs20   gyrRaw[1] = Wire.read()<<8|Wire.read();
+\fs24 \
+
+\fs20   gyrRaw[2] = Wire.read()<<8|Wire.read();
+\fs24 \
+
+\fs20   
+\fs24 \
+
+\fs20   \cf3 #endif
+\fs24 \cf0 \
+
+\fs20   xD[0] = 1;
+\fs24 \
+
+\fs20   \}
+\fs24 \
+}

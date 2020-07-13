@@ -1,0 +1,22 @@
+if (xD[0]==1){
+#ifndef MATLAB_MEX_FILE
+ Serial.print("Acc X: ");
+ Serial.print(accRaw[0]);
+ Serial.print("   |   ");
+ Serial.print("Acc Y: ");
+ Serial.print(accRaw[1]);
+ Serial.print("Acc Z ");
+ Serial.print(accRaw[2]);
+ Serial.print("   |   ");
+ Serial.print("Gyr X: ");
+ Serial.print(gyrRaw[0]);
+ Serial.print("   |   ");
+ Serial.print("gyr Y: ");
+ Serial.print(gyrRaw[1]);
+ Serial.print("   |   ");
+ Serial.print("gyr Z ");
+ Serial.print(gyrRaw[2]);
+ Serial.println(";");
+	
+#endif   
+}
