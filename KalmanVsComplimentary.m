@@ -1,3 +1,6 @@
+%clear arduino cache to run without error and make matlab plot instead of
+%showing raw values
+
 uno = arduino('/dev/tty.usbmodem143301', 'Uno', 'Libraries', 'I2C');
 imu = mpu6050(uno);
 
@@ -38,6 +41,8 @@ while true
     pitchKF = kalFilterPitch(dt, Q_angle, Q_bias, R, accAngleY, gyrRateY);
     
     fprintf(" %f : %f : %f : %f \n", rollCF, pitchCF, rollKF, pitchKF);
+    
+    plot
 end 
 
 
