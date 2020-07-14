@@ -1,7 +1,7 @@
 %clear arduino cache to run without error and make matlab plot instead of
 %showing raw values
 
-uno = arduino('/dev/tty.usbserial-14330', 'Uno', 'Libraries', 'I2C');
+uno = arduino('/dev/tty.usbserial-14310', 'Uno', 'Libraries', 'I2C');
 imu = mpu6050(uno);
 
 rollCF = 0.0;
@@ -10,7 +10,7 @@ pitchCF = 0.0;
 RAD2DEG = 180/pi;
 dt = 0.001;
 Q_angle = 0.0001;
-Q_bias = 0.03;
+Q_bias = 0.02;
 R = 0.0001;
 
 while true 
