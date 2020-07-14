@@ -1,7 +1,7 @@
 %clear arduino cache to run without error and make matlab plot instead of
 %showing raw values
 
-uno = arduino('/dev/tty.usbmodem143301', 'Uno', 'Libraries', 'I2C');
+uno = arduino('/dev/tty.usbserial-14330', 'Uno', 'Libraries', 'I2C');
 imu = mpu6050(uno);
 
 rollCF = 0.0;
@@ -9,11 +9,13 @@ pitchCF = 0.0;
 
 RAD2DEG = 180/pi;
 dt = 0.001;
-Q_angle = 0.0009;
-Q_bias = 0.003;
-R = 0.03;
+Q_angle = 0.0001;
+Q_bias = 0.03;
+R = 0.0001;
 
 while true 
+    timer = timer + dt;
+    
     accRead = readAcceleration(imu);
     gyrRead = readAngularVelocity(imu);
     
@@ -39,11 +41,12 @@ while true
     
     rollKF = kalFilterRoll(dt, Q_angle, Q_bias, R, accAngleX, gyrRateX);
     pitchKF = kalFilterPitch(dt, Q_angle, Q_bias, R, accAngleY, gyrRateY);
-    
+   
     fprintf(" %f : %f : %f : %f \n", rollCF, pitchCF, rollKF, pitchKF);
     
-    plot
+    i = i+1;
 end 
+
 
 
 
