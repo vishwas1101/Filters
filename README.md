@@ -1,5 +1,6 @@
 # IMU Filters
-The code needs to be cleaned and optimised. 
+
+The code needs to be cleaned and optimised. No additional libraries or pre-made functions are used in the uploaded files (other than Wire.h for the Arduino codes).
 
 # Complementary Filter
 A main idea behind using a complementary filter is to integrate the accelerometer and gyroscope data to obtain the attitude of the system. This is achieved by using a low pass filter on the accelerometer and a high pass filter on the gyroscope data, i.e. the data of each of the sensors is combined in a definite ratio whose sum is equal (complement). The ratio I have chosen is 0.98 * Accelerometer and 0.02 * Gyroscope data.  
@@ -17,9 +18,10 @@ The kalman Filter is also be used to estimate the orientation of the system by c
 
 Note that kalman filter can only be applied for linear systems that have gaussian probability distribution.
 
-The code to implement a Kalman Filter on an Arduino + MPU6050 can be found in KalmanFilterMatlab.m and the KalmanFilterSimulink.slx. Although MATLAB provides pre-made and tested functions for the implementation of kalman filters, I have written the code from scratch to give me a better understanding of the concepts. The code has been tuned to get the most accurate orientation.
+The code to implement a Kalman Filter on an Arduino + MPU6050 can be found in KalmanFilterMatlab.m and the KalmanFilterSimulink.slx. Although MATLAB provides pre-made and tested functions for the implementation of kalman filters, I have written the code from scratch to give me a better understanding of the concepts. The code has been tuned to get the most accurate orientation. Note that Hardware support package for Arduino needs to be installed. to run the code. This can be found in the Add-On Library in MATLAB. To test the connections between MATLAB and Arduino, run the IMU_interfacing.m file.
 
 A comparison between Complementary Filter vs Kalman Filter can be found in the file ComplementaryVsKalman.m. I have provided a numerical analysis for the comparison, will upgrade to visual based representation soon.
+
 
 ## Turning the Kalman Filter:
 
