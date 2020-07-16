@@ -33,4 +33,5 @@ This marix consists of the accelerometer variance Q_angle and the the variance i
 #### 2)The Variance in Measurement R: 
 This indicates how much you trust your measurements of the accelerometer. A high value would indicate the variance is high and you trust your new measurements less, this will result in a slow response. A very low value will result in overshooting and noisy behaviour, since you trust the accelerometer measurements too much.
 
-   
+### To Update: 
+- Quaternion based kalman and complimentary filters
