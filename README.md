@@ -11,6 +11,8 @@ Basic Understanding on euler angles will be essential.
 The code for implementing the complementary filter on an Arduino + MPU6050 can be found in the file Complementary_Filter.ino 
 The  hexadecimel register addresses are taken from the MPU6050 register map. You may change them or write to the induvidual bits of the register to change the scale and range of the measurement. 
 
+A quaternion based complementary filter is implemented. This avoids the gimbal lock in euler angles when 1DOF is lost. As Quaternion is a goes into 4 Dimensions, it will not have any sigularities while depicting something in 3 Dimensions.
+
 # Kalman Filter
 The kalman Filter is also be used to estimate the orientation of the system by combining the accelerometer and gyroscope data. This is achieved by using an algorithm that uses a series of measurements observed over time, containing noise and other inaccuracies in its measurements, and  produces estimates of the state of the system which is more accurate than those based on a single measurements like the complementary filter. It is basically a two step process. 
 1)Prediction: Here, the kalman filter estimates the current time step state vaiables along with their inconsistancies with the help of the estimates from the previous time step
@@ -34,4 +36,5 @@ This marix consists of the accelerometer variance Q_angle and the the variance i
 This indicates how much you trust your measurements of the accelerometer. A high value would indicate the variance is high and you trust your new measurements less, this will result in a slow response. A very low value will result in overshooting and noisy behaviour, since you trust the accelerometer measurements too much.
 
 ### To Update: 
-- Quaternion based kalman and complimentary filters
+- Quaternion based kalman filters
+- Graphical/Visual representation
