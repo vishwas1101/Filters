@@ -24,8 +24,7 @@ The code to implement a Kalman Filter on an Arduino + MPU6050 can be found in Ka
 
 A comparison between Complementary Filter vs Kalman Filter can be found in the file ComplementaryVsKalman.m. I have provided a numerical analysis for the comparison, will upgrade to visual based representation soon.
 
-As mentioned kalman filters cabe be used onle for linear systems and which have a gassiun joint probability distribution. This limitation is over come by using Extended Kalman Filters, Unscented Kalman Filters, and Particle Filters.
-
+As mentioned kalman filters can be used only for linear systems and which have a gaussian joint probability distribution. This limitation is over come by using Extended Kalman Filters, Unscented Kalman Filters, and Particle Filters.
 
 ## Turning the Kalman Filter:
 
