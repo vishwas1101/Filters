@@ -26,7 +26,7 @@ A comparison between Complementary Filter vs Kalman Filter can be found in the f
 
 As mentioned kalman filters can be used only for linear systems and which have a gaussian joint probability distribution. This limitation is over come by using Extended Kalman Filters, Unscented Kalman Filters, and Particle Filters.
 
-## Turning the Kalman Filter:
+## Tuning the Kalman Filter:
 
 There are certain constants that can be tuned and changed to imporve the performance of the kalman filter 
 
